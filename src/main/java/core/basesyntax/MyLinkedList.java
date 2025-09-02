@@ -7,22 +7,10 @@ public class MyLinkedList<T> implements MyLinkedListInterface<T> {
     private Node<T> tail;
     private int size;
 
-    static class Node<T> {
-        private T value;
-        private Node<T> prev;
-        private Node<T> next;
-
-        public Node(T value, Node<T> prev, Node<T> next) {
-            this.value = value;
-            this.prev = prev;
-            this.next = next;
-        }
-    }
-
     @Override
     public void add(T value) {
         if (size == 0) {
-            head = new Node<>(value, null, null);
+            head = new Node<>(null, value, null);
             tail = head;
         } else {
             link(tail, value, null);
@@ -137,7 +125,7 @@ public class MyLinkedList<T> implements MyLinkedListInterface<T> {
     }
 
     private void link(Node<T> prev, T value, Node<T> next) {
-        Node<T> newNode = new Node<>(value, prev, next);
+        Node<T> newNode = new Node<>(prev, value, next);
         if (prev != null) {
             prev.next = newNode;
         }
@@ -165,13 +153,9 @@ public class MyLinkedList<T> implements MyLinkedListInterface<T> {
         if (temp == tail) {
             tail = tail.prev;
         }
+        temp.next = null;
+        temp.prev = null;
         size--;
-        if (size == 0) {
-            head = null;
-            tail = null;
-        } else {
-            checkHeadAndTail();
-        }
     }
 
     private void checkHeadAndTail() {
@@ -181,6 +165,18 @@ public class MyLinkedList<T> implements MyLinkedListInterface<T> {
 
         if (head.prev != null) {
             head = head.prev;
+        }
+    }
+
+    static class Node<T> {
+        private T value;
+        private Node<T> prev;
+        private Node<T> next;
+
+        public Node(Node<T> prev, T value, Node<T> next) {
+            this.value = value;
+            this.prev = prev;
+            this.next = next;
         }
     }
 }
