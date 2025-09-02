@@ -7,7 +7,7 @@ public class MyLinkedList<T> implements MyLinkedListInterface<T> {
     private Node<T> tail;
     private int size;
 
-    class Node<T> {
+    static class Node<T> {
         private T value;
         private Node<T> prev;
         private Node<T> next;
@@ -59,7 +59,7 @@ public class MyLinkedList<T> implements MyLinkedListInterface<T> {
 
     @Override
     public T get(int index) {
-        if (!checkIndex(index)) {
+        if (checkIfIndexIsOutOfBands(index)) {
             throw new IndexOutOfBoundsException(index + " is out of bounds for size " + size);
         }
         return getNode(index).value;
@@ -67,7 +67,7 @@ public class MyLinkedList<T> implements MyLinkedListInterface<T> {
 
     @Override
     public T set(T value, int index) {
-        if (!checkIndex(index)) {
+        if (checkIfIndexIsOutOfBands(index)) {
             throw new IndexOutOfBoundsException(index + " is out of bounds for size " + size);
         }
         Node<T> node = getNode(index);
@@ -78,7 +78,7 @@ public class MyLinkedList<T> implements MyLinkedListInterface<T> {
 
     @Override
     public T remove(int index) {
-        if (!checkIndex(index)) {
+        if (checkIfIndexIsOutOfBands(index)) {
             throw new IndexOutOfBoundsException(index + " is out of bounds for size " + size);
         }
         Node<T> temp = getNode(index);
@@ -166,8 +166,8 @@ public class MyLinkedList<T> implements MyLinkedListInterface<T> {
         }
     }
 
-    private boolean checkIndex(int i) {
-        return 0 <= i && i < size;
+    private boolean checkIfIndexIsOutOfBands(int i) {
+        return 0 > i || i >= size;
     }
 
     private void unlink(Node<T> temp) {
