@@ -25,7 +25,7 @@ public class MyLinkedList<T> implements MyLinkedListInterface<T> {
             head = new Node<>(value, null, null);
             tail = head;
         } else {
-            link(value, tail, null);
+            link(tail, value, null);
             tail = tail.next;
         }
         size++;
@@ -41,10 +41,10 @@ public class MyLinkedList<T> implements MyLinkedListInterface<T> {
             return;
         }
         if (index == 0) {
-            link(value, null, head);
+            link(null, value, head);
         } else {
-            Node<T> prev = getNode(index - 1);
-            link(value, prev, prev.next);
+            Node<T> prev = findNodeByIndex(index - 1);
+            link(prev, value, prev.next);
         }
         size++;
         checkHeadAndTail();
@@ -59,18 +59,14 @@ public class MyLinkedList<T> implements MyLinkedListInterface<T> {
 
     @Override
     public T get(int index) {
-        if (checkIfIndexIsOutOfBands(index)) {
-            throw new IndexOutOfBoundsException(index + " is out of bounds for size " + size);
-        }
-        return getNode(index).value;
+        checkIndex(index);
+        return findNodeByIndex(index).value;
     }
 
     @Override
     public T set(T value, int index) {
-        if (checkIfIndexIsOutOfBands(index)) {
-            throw new IndexOutOfBoundsException(index + " is out of bounds for size " + size);
-        }
-        Node<T> node = getNode(index);
+        checkIndex(index);
+        Node<T> node = findNodeByIndex(index);
         T oldValue = node.value;
         node.value = value;
         return oldValue;
@@ -78,18 +74,9 @@ public class MyLinkedList<T> implements MyLinkedListInterface<T> {
 
     @Override
     public T remove(int index) {
-        if (checkIfIndexIsOutOfBands(index)) {
-            throw new IndexOutOfBoundsException(index + " is out of bounds for size " + size);
-        }
-        Node<T> temp = getNode(index);
+        checkIndex(index);
+        Node<T> temp = findNodeByIndex(index);
         unlink(temp);
-        size--;
-        if (size == 0) {
-            head = null;
-            tail = null;
-        } else {
-            checkHeadAndTail();
-        }
         return temp.value;
     }
 
@@ -98,13 +85,6 @@ public class MyLinkedList<T> implements MyLinkedListInterface<T> {
         Node<T> temp = getNode(object);
         if (temp != null) {
             unlink(temp);
-            size--;
-            if (size == 0) {
-                head = null;
-                tail = null;
-            } else {
-                checkHeadAndTail();
-            }
             return true;
         }
         return false;
@@ -120,7 +100,7 @@ public class MyLinkedList<T> implements MyLinkedListInterface<T> {
         return size == 0;
     }
 
-    private Node<T> getNode(int index) {
+    private Node<T> findNodeByIndex(int index) {
         int currentIndex;
         Node<T> currentNode;
         if (index == 0) {
@@ -156,7 +136,7 @@ public class MyLinkedList<T> implements MyLinkedListInterface<T> {
         return temp;
     }
 
-    private void link(T value, Node<T> prev, Node<T> next) {
+    private void link(Node<T> prev, T value, Node<T> next) {
         Node<T> newNode = new Node<>(value, prev, next);
         if (prev != null) {
             prev.next = newNode;
@@ -166,8 +146,10 @@ public class MyLinkedList<T> implements MyLinkedListInterface<T> {
         }
     }
 
-    private boolean checkIfIndexIsOutOfBands(int i) {
-        return 0 > i || i >= size;
+    private void checkIndex(int i) {
+        if (0 > i || i >= size) {
+            throw new IndexOutOfBoundsException(i + " is out of bounds for size " + size);
+        }
     }
 
     private void unlink(Node<T> temp) {
@@ -177,22 +159,27 @@ public class MyLinkedList<T> implements MyLinkedListInterface<T> {
         if (temp.next != null) {
             temp.next.prev = temp.prev;
         }
-
         if (temp == head) {
             head = head.next;
         }
-
         if (temp == tail) {
             tail = tail.prev;
+        }
+        size--;
+        if (size == 0) {
+            head = null;
+            tail = null;
+        } else {
+            checkHeadAndTail();
         }
     }
 
     private void checkHeadAndTail() {
-        while (tail.next != null) {
+        if (tail.next != null) {
             tail = tail.next;
         }
 
-        while (head.prev != null) {
+        if (head.prev != null) {
             head = head.prev;
         }
     }
